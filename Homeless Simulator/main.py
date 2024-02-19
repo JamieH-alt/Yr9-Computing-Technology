@@ -16,6 +16,18 @@ print("░╚═══██╗██║██║╚██╔╝██║██�
 print("██████╔╝██║██║░╚═╝░██║╚██████╔╝███████╗██║░░██║░░░██║░░░╚█████╔╝██║░░██║")
 print("╚═════╝░╚═╝╚═╝░░░░░╚═╝░╚═════╝░╚══════╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝")
 
+print("")
+print(" --- Disclaimer ---")
+print("This game is meant to be educational and show the troubles homeless people have to face,")
+print("This game is meant to encourage positive action and charity. And promote awareness of homelessness")
+print(" --- Disclaimer ---")
+accept = input("Are you ok with the contents of this game? (y or n) ")
+if accept == "y":
+    accepted = True
+else:
+    accepted = False
+
+
 with open('restaurantstats.json', 'r') as file:
     restaurant = json.load(file)
 
@@ -26,10 +38,14 @@ currentIndex = "A1"
 spot = 0
 
 playerStats = {"Health": 10, "Hunger": 25, "Money": 0, "Inventory": []}
-worldStats = {"Time": 8}
+worldStats = {"Time": 8, "TrueTime": 0}
 
 def FindLocation(location):
     return locationToFile.get(location)
+
+def trueTime():
+    if worldStats['Time'] == 24:
+        worldStats['Time'] = 0
 
 def Actions(location):
     time.sleep(1)
@@ -46,7 +62,7 @@ def Actions(location):
         spot = location.get("Spots")[0]
     ### Listing Everything
     print("===============")
-    print(f"It's currently {worldStats.get("Time")}:00 Oclock!")
+    print(f"It's currently {worldStats.get('Time')}:00 Oclock!")
     print("You are at " + spot)
     print("You can : ")
     if len(location.get("Spots")) > 1:
@@ -69,7 +85,10 @@ def Actions(location):
                 print(f"You now have {playerStats['Hunger']} Hunger")
                 completed = True
                 worldStats['Time'] += 1
+                worldStats['TrueTime'] += 1
+                trueTime()
                 print(f"Its now {worldStats['Time']}:00 Oclock!")
+                spot = spotLoco
                 return
         if completed == False:
             print("Thats not a location!")
@@ -86,6 +105,8 @@ def Actions(location):
             playerStats['Hunger'] -= 1
             print(f"You now have {playerStats['Hunger']} Hunger!")
             worldStats['Time'] += 1
+            worldStats['TrueTime'] += 1
+            trueTime()
             print(f"Its now {worldStats['Time']}:00 Oclock!")
             return
     elif action.lower() == "search":
@@ -103,6 +124,8 @@ def Actions(location):
             playerStats['Hunger'] -= 0.5
             print(f"You now have {playerStats['Hunger']} Hunger!")
             worldStats['Time'] += 1
+            worldStats['TrueTime'] += 1
+            trueTime()
             print(f"Its now {worldStats['Time']}:00 Oclock!")
         else:
             print("You can't do that here!")
@@ -116,7 +139,29 @@ def Actions(location):
         for i in playerStats['Inventory']:
             for i2 in i.keys():
               print(f"*{i2}")
+        invUse = input("Would you like to use any items (y or n)? ")
+        if invUse == "y":
+            itemSelect = input("Which Item Would you like to use? ")
+            for i in playerStats['Inventory']:
+                if itemSelect in i.keys():
+                    if i.get(itemSelect) == "food":
+                        print(f"You ate {itemSelect}!")
+                        print("It gave you one hunger!")
+                        playerStats['Hunger'] += 1
+                        print(f"You now have {playerStats['Hunger']} Hunger")
+        return
     return
 
-while playerStats['Hunger'] > 0 or playerStats['Health'] > 0:
-    Actions(FindLocation(currentLocation))
+while playerStats['Hunger'] > 0:
+    if accepted == True and playerStats['Health'] > 0:
+        Actions(FindLocation(currentLocation))
+    elif playerStats['Health'] <= 0:
+        print("You died!")
+        exit()
+    else:
+        print("Goodbye! ... No Refunds")
+        exit()
+
+if playerStats['Hunger'] <= 0:
+    print("You starved to death!")
+    exit()
