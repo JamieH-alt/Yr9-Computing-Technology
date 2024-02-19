@@ -27,6 +27,8 @@ if accept == "y":
 else:
     accepted = False
 
+print("Test Changes")
+
 
 with open('restaurantstats.json', 'r') as file:
     restaurant = json.load(file)
