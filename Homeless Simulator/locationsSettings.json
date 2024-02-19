@@ -2,7 +2,7 @@
   "Restaurant": {
     "Name": "Restaurant",
     "FileName": "restaurantstats.json",
-    "DefaultLocation": false,
+    "DefaultLocation": true,
     "Spots": ["Infront Restaurant", "Behind Restaurant"],
     "Index": "A1",
     "Behind Restaurant": {
