@@ -44,13 +44,14 @@ forts = {"Restaurant": {"Behind Restaurant": 1}}
 playerStats = {"Health": 10, "Hunger": 25, "Money": 0, "Inventory": []}
 worldStats = {"Time": 8, "TrueTime": 0}
 
+
 def basicLoadSystem():
     print("Do you already have a save?")
     saveYes = input("(y or n) ")
     if saveYes == "y":
         global saveName
         saveName = input("What is the name of your save? ")
-        with open (saveName + ".json", 'r') as savedata:
+        with open(saveName + ".json", 'r') as savedata:
             save = json.load(savedata)
             global worldStats
             global playerStats
@@ -79,7 +80,7 @@ def basicLoadSystem():
             locationData = json.load(locationSettings)
             for i in locationData:
                 curDataSet = locationData.get(i)
-                if curDataSet.get("DefaultLocation") == True:
+                if curDataSet.get("DefaultLocation"):
                     print("Loading Up!")
                     currentLocation = curDataSet.get("Name")
                     currentIndex = curDataSet.get("Index")
@@ -87,30 +88,29 @@ def basicLoadSystem():
                 allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
         print("Starting a new game without loading variables")
 
+
 def FindLocation(location):
     with open('locationsSettings.json', "r+") as file:
         loaded = json.load(file)
         return loaded.get(location)
 
+
 def trueTime():
     if worldStats['Time'] == 24:
         worldStats['Time'] = 0
+
+
 def Actions(location):
     time.sleep(1)
-    ### Variables
+    # Variables
     global spot
     global currentLocation
     global currentIndex
-    move = False
-    steal = False
-    fight = False
-    search = False
-    scraps = False
     completed = False
-    ### Spot Setting
+    # Spot Setting
     if spot == 0:
         spot = location.get("Spots")[0]
-    ### Listing Everything
+    # Listing Everything
     print("===============")
     print(f"It's currently {worldStats.get('Time')}:00 Oclock!")
     print("You are at " + spot)
@@ -129,7 +129,7 @@ def Actions(location):
     print("*Exit (Saves!)")
     action = input("What would you like to do? ")
     print("====================================")
-    ### Movement Section
+    # Movement Section
     if action.lower() == "move":
         moveTo = input("Where would you like to go? ")
         for spotLoco in location.get("Spots"):
@@ -144,7 +144,7 @@ def Actions(location):
                 print(f"Its now {worldStats['Time']}:00 Oclock!")
                 spot = spotLoco
                 return
-        if completed == False:
+        if not completed:
             print("Thats not a location!")
             return
     elif action.lower() == "beg":
@@ -192,23 +192,23 @@ def Actions(location):
         print("These are all the items you have!")
         for i in playerStats['Inventory']:
             for i2 in i.keys():
-              print(f"*{i2}")
+                print(f"*{i2}")
         invUse = input("Would you like to use any items (y or n)? ")
         if invUse == "y":
             itemSelect = input("Which Item Would you like to use? ")
             doneUsage = False
             for i in playerStats['Inventory']:
                 if itemSelect in i.keys():
-                    if i.get(itemSelect) == "food" and doneUsage == False:
+                    if i.get(itemSelect) == "food" and doneUsage is False:
                         doneUsage = True
                         print(f"You ate {itemSelect}!")
                         print("It gave you one hunger!")
                         playerStats['Hunger'] += 1
                         print(f"You now have {playerStats['Hunger']} Hunger")
                         playerStats['Inventory'].remove(i)
-                    elif i.get(itemSelect) == "structure" and doneUsage == False:
+                    elif i.get(itemSelect) == "structure" and doneUsage is False:
                         doneUsage = True
-                        if location.get(spot).get("Fort").get("Buildable") == True:
+                        if location.get(spot).get("Fort").get("Buildable") is True:
                             fortTier = location.get(spot).get("Fort").get("Tier")
                             if fortTier == 0:
                                 print("Constructing A Tier 1 Fort!")
@@ -221,7 +221,6 @@ def Actions(location):
         return
     elif action.lower() == "travel":
         print("You can travel to : ")
-        locationData = []
         with open("locationsSettings.json", "r+") as locationSettings:
             locationData = json.load(locationSettings)
             for i in locationData:
@@ -259,6 +258,7 @@ def Actions(location):
         endGame()
     return
 
+
 def basicSavingSystem():
     with open("locationsSettings.json", "r+") as locationSettings:
         locationData = json.load(locationSettings)
@@ -286,6 +286,7 @@ def basicSavingSystem():
         with open(saveName + ".json", "x") as savefile:
             savefile.write(saveFormat)
 
+
 def endGame():
     shouldSave = input("Would you like to save? (y or n) ")
     if shouldSave == "y":
@@ -295,10 +296,12 @@ def endGame():
         print("Good Bye!")
         exit()
 
+
 basicLoadSystem()
 
+
 while playerStats['Hunger'] > 0:
-    if accepted == True and playerStats['Health'] > 0:
+    if accepted is True and playerStats['Health'] > 0:
         Actions(FindLocation(currentLocation))
     elif playerStats['Health'] <= 0:
         print("You died!")
