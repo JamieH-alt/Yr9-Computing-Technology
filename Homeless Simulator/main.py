@@ -73,10 +73,6 @@ def basicLoadSystem():
                     curDataSet = locationData.get(i)
                     locationToFilePath[curDataSet.get("Name")] = curDataSet.get("FileName")
                     allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
-                    #with open("restaurantstats.json", "r+") as dataFile:
-                    #    dataFileData = json.load(dataFile)
-                    #    dataFile.truncate(0)
-                    #    dataFileData.write(baseFiles[dataFile.get("Name")])
     else:
         with open('locationsSettings.json', "r+") as locationSettings:
             locationData = json.load(locationSettings)
@@ -102,6 +98,8 @@ def Actions(location):
     time.sleep(1)
     ### Variables
     global spot
+    global currentLocation
+    global currentIndex
     move = False
     steal = False
     fight = False
@@ -126,6 +124,7 @@ def Actions(location):
     if location.get(spot).get("Fort").get("Tier") >= 1:
         print("*Sleep")
     print("*Inventory")
+    print("*Travel")
     print("*Exit (Saves!)")
     action = input("What would you like to do? ")
     print("====================================")
@@ -221,6 +220,29 @@ def Actions(location):
                         else:
                             print(location.get(spot).get("Fort").get("Reason"))
         return
+    elif action.lower() == "travel":
+        print("You can travel to : ")
+        locationData = []
+        with open("locationsSettings.json", "r+") as locationSettings:
+            locationData = json.load(locationSettings)
+            for i in locationData:
+                print(f"*{locationData.get(i).get("Name")}")
+        whereto = input("Where would you like to go? ")
+        if whereto == locationData.get(i).get("Name"):
+            currentLocation = locationData.get(i).get("Name")
+            currentIndex = locationData.get(i).get("Index")
+            spot = 0
+            playerStats['Hunger'] -= 1
+            print("That costed 1 hunger!")
+            print(f"You now have {playerStats['Hunger']} Hunger")
+            completed = True
+            worldStats['Time'] += 1
+            worldStats['TrueTime'] += 1
+            trueTime()
+            print(f"Its now {worldStats['Time']}:00 Oclock!")
+        else:
+            print("Thats not a location!")
+
     elif action.lower() == "sleep":
         print("You are now going to sleep for 4 hours!")
         worldStats['Time'] += 4
@@ -267,7 +289,7 @@ def endGame():
         basicSavingSystem()
         exit()
     else:
-        print("GoodBye!")
+        print("Good Bye!")
         exit()
 
 basicLoadSystem()
