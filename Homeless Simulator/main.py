@@ -1,6 +1,7 @@
 import random
 import time
 import json
+import os
 
 print("██╗░░██╗░█████╗░███╗░░░███╗███████╗██╗░░░░░███████╗░██████╗░██████╗")
 print("██║░░██║██╔══██╗████╗░████║██╔════╝██║░░░░░██╔════╝██╔════╝██╔════╝")
@@ -28,17 +29,39 @@ else:
     accepted = False
 
 
-with open('restaurantstats.json', 'r') as file:
-    restaurant = json.load(file)
+with open('restaurantstats.json', 'r') as resstats:
+    restaurant = json.load(resstats)
 
 allLocations = {"A1": "Restaurant", "A2": "Toy Shop", "B1": "Metro", "B2": "Street"}
 locationToFile = {"Restaurant": restaurant}
 currentLocation = "Restaurant"
 currentIndex = "A1"
 spot = 0
+saveName = ""
 
 playerStats = {"Health": 10, "Hunger": 25, "Money": 0, "Inventory": []}
 worldStats = {"Time": 8, "TrueTime": 0}
+
+def basicLoadSystem():
+    print("Do you already have a save?")
+    saveYes = input("(y or n) ")
+    if saveYes == "y":
+        global saveName
+        saveName = input("What is the name of your save? ")
+        with open (saveName + ".json", 'r') as savedata:
+            save = json.load(savedata)
+            global worldStats
+            global playerStats
+            global currentLocation
+            global spot
+            global currentIndex
+            worldStats = save.get("worldStats")
+            playerStats = save.get("playerStats")
+            currentLocation = save.get("CurrentLocation")
+            spot = save.get("CurrentSpot")
+            currentIndex = save.get("CurrentIndex")
+    else:
+        print("Starting a new game without loading variables")
 
 def FindLocation(location):
     return locationToFile.get(location)
@@ -46,7 +69,6 @@ def FindLocation(location):
 def trueTime():
     if worldStats['Time'] == 24:
         worldStats['Time'] = 0
-
 def Actions(location):
     time.sleep(1)
     ### Variables
@@ -73,6 +95,7 @@ def Actions(location):
     for i in location.get(spot).get("Actions"):
         print("*" + i)
     print("*Inventory")
+    print("*Exit (Saves!)")
     action = input("What would you like to do? ")
     print("====================================")
     ### Movement Section
@@ -150,7 +173,38 @@ def Actions(location):
                         playerStats['Hunger'] += 1
                         print(f"You now have {playerStats['Hunger']} Hunger")
         return
+    elif action.lower() == "exit":
+        endGame()
     return
+
+def basicSavingSystem():
+    saveName = input("What is the name of your save? ")
+    print("Formating Save Data")
+    saveStats = {"worldStats": worldStats,
+                 "playerStats": playerStats,
+                 "CurrentLocation": currentLocation,
+                 "CurrentSpot": spot,
+                 "CurrentIndex": currentIndex
+                 }
+    saveFormat = json.dumps(saveStats, indent=2)
+    if os.path.isfile('./' + saveName + ".json"):
+        with open(saveName + ".json", "r+") as savefile:
+            savefile.truncate(0)
+            savefile.write(saveFormat)
+    else:
+        with open(saveName + ".json", "x") as savefile:
+            savefile.write(saveFormat)
+
+def endGame():
+    shouldSave = input("Would you like to save? (y or n) ")
+    if shouldSave == "y":
+        basicSavingSystem()
+        exit()
+    else:
+        print("GoodBye!")
+        exit()
+
+basicLoadSystem()
 
 while playerStats['Hunger'] > 0:
     if accepted == True and playerStats['Health'] > 0:

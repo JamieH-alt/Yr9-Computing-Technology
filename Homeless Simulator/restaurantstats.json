@@ -1,5 +1,6 @@
 {
     "Spots": ["Infront Restaurant", "Behind Restaurant"],
+    "Index": "A1",
     "Behind Restaurant": {
         "Actions": ["Search"],
         "Dumpster": {"A crisp 5 dollar note": 5, "A Sandwhich": "food", "Hotdog": "food", "Cardboard": "structure"}
