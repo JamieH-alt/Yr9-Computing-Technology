@@ -35,7 +35,7 @@ baseFiles = {}
 
 allLocations = {}
 locationToFilePath = {}
-currentLocation = "Restaurant"
+currentLocation = "DevTesting"
 currentIndex = ""
 spot = 0
 saveName = ""
@@ -73,10 +73,10 @@ def basicLoadSystem():
                     curDataSet = locationData.get(i)
                     locationToFilePath[curDataSet.get("Name")] = curDataSet.get("FileName")
                     allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
-                    with open(curDataSet.get("FileName"), "r+") as dataFile:
-                        dataFile.truncate(0)
-                        dataFileData = json.load(dataFile)
-                        dataFileData.write(baseFiles[dataFile.get("Name")])
+                    #with open("restaurantstats.json", "r+") as dataFile:
+                    #    dataFileData = json.load(dataFile)
+                    #    dataFile.truncate(0)
+                    #    dataFileData.write(baseFiles[dataFile.get("Name")])
     else:
         with open('locationsSettings.json', "r+") as locationSettings:
             locationData = json.load(locationSettings)
@@ -123,6 +123,8 @@ def Actions(location):
         move = True
     for i in location.get(spot).get("Actions"):
         print("*" + i)
+    if location.get(spot).get("Fort").get("Tier") >= 1:
+        print("*Sleep")
     print("*Inventory")
     print("*Exit (Saves!)")
     action = input("What would you like to do? ")
@@ -219,6 +221,18 @@ def Actions(location):
                         else:
                             print(location.get(spot).get("Fort").get("Reason"))
         return
+    elif action.lower() == "sleep":
+        print("You are now going to sleep for 4 hours!")
+        worldStats['Time'] += 4
+        worldStats['TrueTime'] += 4
+        trueTime()
+        print(f"Its now {worldStats['Time']}:00 Oclock!")
+        playerStats['Hunger'] -= 6 / location.get(spot).get("Fort").get("Tier")
+        print(f"That costed you {6 / location.get(spot).get("Fort").get("Tier")} Hunger!")
+        print("You restored some health!")
+        newHealth = random.randrange(0, 6)
+        playerStats['Health'] += newHealth
+        print(f"You gained {newHealth} Health and are now at {playerStats['Health']}")
     elif action.lower() == "exit":
         endGame()
     return
@@ -227,8 +241,7 @@ def basicSavingSystem():
     with open("locationsSettings.json", "r+") as locationSettings:
         locationData = json.load(locationSettings)
         for i in locationData:
-            baseFiles[locationData.get("FileName")] = locationData.get(i)
-
+            baseFiles[locationData.get(i).get("Name")] = locationData.get(i)
     saveName = input("What is the name of your save? ")
     print("Formating Save Data")
     saveStats = {"worldStats": worldStats,
