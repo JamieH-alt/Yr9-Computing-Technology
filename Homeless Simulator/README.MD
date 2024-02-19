@@ -74,12 +74,10 @@ Would you like to use any items (y or n)?
 <p>The <code>*24.0 Hunger</code> Shows how hungry you are! Like health if this reaches 0 you will die!</p>
 <p></p>
 Then it shows us the items the user has with the following code
-```
-These are all the items you have!
-*Hotdog
-*Cardboard
-Would you like to use any items (y or n)?
-```
+<blockquote>These are all the items you have!</blockquote>
+<blockquote>*Hotdog</blockquote>
+<blockquote>*Cardboard</blockquote>
+<blockquote>Would you like to use any items (y or n)?</blockquote>
 
 The <code>Hotdog</code> tells us we have a hotdog (which is edible for 1 hunger)
 <p></p>
