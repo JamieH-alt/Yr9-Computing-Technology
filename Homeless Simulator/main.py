@@ -39,6 +39,7 @@ currentLocation = "DevTesting"
 currentIndex = ""
 spot = 0
 saveName = ""
+forts = {"Restaurant": {"Behind Restaurant": 1}}
 
 playerStats = {"Health": 10, "Hunger": 25, "Money": 0, "Inventory": []}
 worldStats = {"Time": 8, "TrueTime": 0}
@@ -121,7 +122,7 @@ def Actions(location):
         move = True
     for i in location.get(spot).get("Actions"):
         print("*" + i)
-    if location.get(spot).get("Fort").get("Tier") >= 1:
+    if baseFiles[location.get("Name")][spot]["Fort"]["Tier"] >= 1:
         print("*Sleep")
     print("*Inventory")
     print("*Travel")
@@ -212,10 +213,8 @@ def Actions(location):
                             if fortTier == 0:
                                 print("Constructing A Tier 1 Fort!")
                                 playerStats['Inventory'].remove(i)
-                                with open("locationsSettings.json", "r+") as locationSettings:
-                                    locationData = json.load(locationSettings)
-                                    baseFiles[currentLocation] = locationData.get(currentLocation)
-                                    baseFiles[currentLocation][spot]["Fort"]["Tier"] += 1
+                                global forts
+                                forts[currentLocation][spot] = 1
                                 print("Fort Constructed!")
                         else:
                             print(location.get(spot).get("Fort").get("Reason"))
@@ -249,8 +248,9 @@ def Actions(location):
         worldStats['TrueTime'] += 4
         trueTime()
         print(f"Its now {worldStats['Time']}:00 Oclock!")
-        playerStats['Hunger'] -= 6 / location.get(spot).get("Fort").get("Tier")
-        print(f"That costed you {6 / location.get(spot).get("Fort").get("Tier")} Hunger!")
+        playerStats['Hunger'] -= 6 / baseFiles[location.get("Name")][spot]["Fort"]["Tier"]
+        print(f"That costed you {6 / baseFiles[location.get("Name")][spot]["Fort"]["Tier"]} hunger!")
+        print(f"You're now at {playerStats['Hunger']} hunger!")
         print("You restored some health!")
         newHealth = random.randrange(0, 6)
         playerStats['Health'] += newHealth
@@ -264,6 +264,9 @@ def basicSavingSystem():
         locationData = json.load(locationSettings)
         for i in locationData:
             baseFiles[locationData.get(i).get("Name")] = locationData.get(i)
+            if locationData.get(i).get("Name") in forts:
+                fortDataset = list(forts.get(locationData.get(i).get("Name")).keys())
+                baseFiles[locationData.get(i).get("Name")][fortDataset[0]]["Fort"]["Tier"] = forts.get(locationData.get(i).get("Name")).get(fortDataset[0])
     saveName = input("What is the name of your save? ")
     print("Formating Save Data")
     saveStats = {"worldStats": worldStats,
