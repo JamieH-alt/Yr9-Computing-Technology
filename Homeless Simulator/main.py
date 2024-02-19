@@ -27,15 +27,16 @@ if accept == "y":
     accepted = True
 else:
     accepted = False
+    exit()
 
+projectVersion = "0.0.1"
 
-with open('restaurantstats.json', 'r') as resstats:
-    restaurant = json.load(resstats)
+baseFiles = {}
 
-allLocations = {"A1": "Restaurant", "A2": "Toy Shop", "B1": "Metro", "B2": "Street"}
-locationToFile = {"Restaurant": restaurant}
+allLocations = {}
+locationToFilePath = {}
 currentLocation = "Restaurant"
-currentIndex = "A1"
+currentIndex = ""
 spot = 0
 saveName = ""
 
@@ -55,16 +56,44 @@ def basicLoadSystem():
             global currentLocation
             global spot
             global currentIndex
+            global baseFiles
+            global projectVersion
+            if projectVersion != save.get("ProjectVersion"):
+                print("Invalid Save File! (Project Version Is Different To Current Version!)")
+                exit()
             worldStats = save.get("worldStats")
             playerStats = save.get("playerStats")
             currentLocation = save.get("CurrentLocation")
             spot = save.get("CurrentSpot")
             currentIndex = save.get("CurrentIndex")
+            baseFiles = save.get("BaseFiles")
+            with open('locationsSettings.json', "r+") as locationSettings:
+                locationData = json.load(locationSettings)
+                for i in locationData:
+                    curDataSet = locationData.get(i)
+                    locationToFilePath[curDataSet.get("Name")] = curDataSet.get("FileName")
+                    allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
+                    with open(curDataSet.get("FileName"), "r+") as dataFile:
+                        dataFile.truncate(0)
+                        dataFileData = json.load(dataFile)
+                        dataFileData.write(baseFiles[dataFile.get("Name")])
     else:
+        with open('locationsSettings.json', "r+") as locationSettings:
+            locationData = json.load(locationSettings)
+            for i in locationData:
+                curDataSet = locationData.get(i)
+                if curDataSet.get("DefaultLocation") == True:
+                    print("Loading Up!")
+                    currentLocation = curDataSet.get("Name")
+                    currentIndex = curDataSet.get("Index")
+                locationToFilePath[curDataSet.get("Name")] = curDataSet.get("FileName")
+                allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
         print("Starting a new game without loading variables")
 
 def FindLocation(location):
-    return locationToFile.get(location)
+    with open('locationsSettings.json', "r+") as file:
+        loaded = json.load(file)
+        return loaded.get(location)
 
 def trueTime():
     if worldStats['Time'] == 24:
@@ -165,26 +194,50 @@ def Actions(location):
         invUse = input("Would you like to use any items (y or n)? ")
         if invUse == "y":
             itemSelect = input("Which Item Would you like to use? ")
+            doneUsage = False
             for i in playerStats['Inventory']:
                 if itemSelect in i.keys():
-                    if i.get(itemSelect) == "food":
+                    if i.get(itemSelect) == "food" and doneUsage == False:
+                        doneUsage = True
                         print(f"You ate {itemSelect}!")
                         print("It gave you one hunger!")
                         playerStats['Hunger'] += 1
                         print(f"You now have {playerStats['Hunger']} Hunger")
+                        playerStats['Inventory'].remove(i)
+                    elif i.get(itemSelect) == "structure" and doneUsage == False:
+                        doneUsage = True
+                        if location.get(spot).get("Fort").get("Buildable") == True:
+                            fortTier = location.get(spot).get("Fort").get("Tier")
+                            if fortTier == 0:
+                                print("Constructing A Tier 1 Fort!")
+                                playerStats['Inventory'].remove(i)
+                                with open("locationsSettings.json", "r+") as locationSettings:
+                                    locationData = json.load(locationSettings)
+                                    baseFiles[currentLocation] = locationData.get(currentLocation)
+                                    baseFiles[currentLocation][spot]["Fort"]["Tier"] += 1
+                                print("Fort Constructed!")
+                        else:
+                            print(location.get(spot).get("Fort").get("Reason"))
         return
     elif action.lower() == "exit":
         endGame()
     return
 
 def basicSavingSystem():
+    with open("locationsSettings.json", "r+") as locationSettings:
+        locationData = json.load(locationSettings)
+        for i in locationData:
+            baseFiles[locationData.get("FileName")] = locationData.get(i)
+
     saveName = input("What is the name of your save? ")
     print("Formating Save Data")
     saveStats = {"worldStats": worldStats,
+                 "ProjectVersion": projectVersion,
                  "playerStats": playerStats,
                  "CurrentLocation": currentLocation,
                  "CurrentSpot": spot,
-                 "CurrentIndex": currentIndex
+                 "CurrentIndex": currentIndex,
+                 "BaseFiles": baseFiles
                  }
     saveFormat = json.dumps(saveStats, indent=2)
     if os.path.isfile('./' + saveName + ".json"):

@@ -1,0 +1,16 @@
+{
+    "Spots": ["Infront Restaurant", "Behind Restaurant"],
+    "Index": "A1",
+    "Behind Restaurant": {
+        "Actions": ["Search", "Build"],
+        "Dumpster": {"A crisp 5 dollar note": 5, "A Sandwhich": "food", "Hotdog": "food", "Cardboard": "structure"},
+        "Fort": {"Tier":  0}
+    },
+    "Infront Restaurant": {
+        "Actions": ["Beg", "Steal", "Fight", "Search"],
+        "Beg": {"A kind man donated you 5 dolars": 5,"A child dropped you a dollar": 1,"A lady gave you 2 dollars": 2,"You got punched in the face then given 3 dollars": 3,"You got gifted 8 dollars": 8,"You got punched in the face and got no money": 0,"Someone stole you're money": -1},
+        "Steal": {"A small sandwhich": "food", "A punch in the face": "health-", "You got arrested": "lost"},
+        "Dumpster": {"A crisp 5 dollar note": 5, "A Sandwhich": "food", "Hotdog": "food", "Cardboard": "structure"},
+        "Fort": {"Tier":  0}
+    }
+}
