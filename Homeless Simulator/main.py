@@ -30,6 +30,7 @@ else:
     exit()
 
 projectVersion = "0.0.1"
+loadedFiles = False
 
 baseFiles = {}
 
@@ -48,6 +49,7 @@ worldStats = {"Time": 8, "TrueTime": 0}
 def basicLoadSystem():
     print("Do you already have a save?")
     saveYes = input("(y or n) ")
+    global loadedFiles
     if saveYes == "y":
         global saveName
         saveName = input("What is the name of your save? ")
@@ -75,6 +77,7 @@ def basicLoadSystem():
                     curDataSet = locationData.get(i)
                     locationToFilePath[curDataSet.get("Name")] = curDataSet.get("FileName")
                     allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
+        loadedFiles = True
     else:
         with open('locationsSettings.json', "r+") as locationSettings:
             locationData = json.load(locationSettings)
@@ -86,6 +89,7 @@ def basicLoadSystem():
                     currentIndex = curDataSet.get("Index")
                 locationToFilePath[curDataSet.get("Name")] = curDataSet.get("FileName")
                 allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
+        loadedFiles = False
         print("Starting a new game without loading variables")
 
 
@@ -106,6 +110,7 @@ def Actions(location):
     global spot
     global currentLocation
     global currentIndex
+    global loadedFiles
     completed = False
     # Spot Setting
     if spot == 0:
@@ -122,8 +127,9 @@ def Actions(location):
         move = True
     for i in location.get(spot).get("Actions"):
         print("*" + i)
-    if baseFiles[location.get("Name")][spot]["Fort"]["Tier"] >= 1:
-        print("*Sleep")
+    if loadedFiles == True:
+        if baseFiles[location.get("Name")][spot]["Fort"]["Tier"] >= 1:
+            print("*Sleep")
     print("*Inventory")
     print("*Travel")
     print("*Exit (Saves!)")
@@ -211,11 +217,14 @@ def Actions(location):
                         if location.get(spot).get("Fort").get("Buildable") is True:
                             fortTier = location.get(spot).get("Fort").get("Tier")
                             if fortTier == 0:
-                                print("Constructing A Tier 1 Fort!")
-                                playerStats['Inventory'].remove(i)
-                                global forts
-                                forts[currentLocation][spot] = 1
-                                print("Fort Constructed!")
+                                if loadedFiles == True:
+                                    print("Constructing A Tier 1 Fort!")
+                                    playerStats['Inventory'].remove(i)
+                                    global forts
+                                    forts[currentLocation][spot] = 1
+                                    print("Fort Constructed!")
+                                else:
+                                    print("Please save and reload the game before building anything!")
                         else:
                             print(location.get(spot).get("Fort").get("Reason"))
         return
