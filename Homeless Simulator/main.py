@@ -2,38 +2,20 @@ import random
 import time
 import json
 import os
+import sys
+import threading
+from playsound import playsound # Make sure to run pip install playsound==1.2.2
+from termcolor import colored, cprint # Make sure to run pip install termcolor
 
-print("██╗░░██╗░█████╗░███╗░░░███╗███████╗██╗░░░░░███████╗░██████╗░██████╗")
-print("██║░░██║██╔══██╗████╗░████║██╔════╝██║░░░░░██╔════╝██╔════╝██╔════╝")
-print("███████║██║░░██║██╔████╔██║█████╗░░██║░░░░░█████╗░░╚█████╗░╚█████╗░")
-print("██╔══██║██║░░██║██║╚██╔╝██║██╔══╝░░██║░░░░░██╔══╝░░░╚═══██╗░╚═══██╗")
-print("██║░░██║╚█████╔╝██║░╚═╝░██║███████╗███████╗███████╗██████╔╝██████╔╝")
-print("╚═╝░░╚═╝░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚══════╝╚══════╝╚═════╝░╚═════╝░")
-print("")
-print("░██████╗██╗███╗░░░███╗██╗░░░██╗██╗░░░░░░█████╗░████████╗░█████╗░██████╗░")
-print("██╔════╝██║████╗░████║██║░░░██║██║░░░░░██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗")
-print("╚█████╗░██║██╔████╔██║██║░░░██║██║░░░░░███████║░░░██║░░░██║░░██║██████╔╝")
-print("░╚═══██╗██║██║╚██╔╝██║██║░░░██║██║░░░░░██╔══██║░░░██║░░░██║░░██║██╔══██╗")
-print("██████╔╝██║██║░╚═╝░██║╚██████╔╝███████╗██║░░██║░░░██║░░░╚█████╔╝██║░░██║")
-print("╚═════╝░╚═╝╚═╝░░░░░╚═╝░╚═════╝░╚══════╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝")
-
-print("")
-print(" --- Disclaimer ---")
-print("This game is meant to be educational and show the troubles homeless people have to face,")
-print("This game is meant to encourage positive action and charity. And promote awareness of homelessness")
-print(" --- Disclaimer ---")
-accept = input("Are you ok with the contents of this game? (y or n) ")
-if accept == "y":
-    accepted = True
-else:
-    accepted = False
-    exit()
-
+# Setting Up Game
 projectVersion = "0.0.1"
 loadedFiles = False
+accepted = False
 
+# Saving
 baseFiles = {}
 
+# Constantly Changing and Accessed Variables
 allLocations = {}
 locationToFilePath = {}
 currentLocation = "DevTesting"
@@ -42,8 +24,74 @@ spot = 0
 saveName = ""
 forts = {"Restaurant": {"Behind Restaurant": 1}}
 
+# Stats
 playerStats = {"Health": 10, "Hunger": 25, "Money": 0, "Inventory": []}
 worldStats = {"Time": 8, "TrueTime": 0}
+
+# Sound FX
+soundsDirectory = os.getcwd() + "/Sounds/"
+
+def fancyTextWriting(words):
+    for char in words:
+        time.sleep(0.05)
+        #playsound(soundsDirectory + "Typing.mp3")
+        sys.stdout.write(char)
+        sys.stdout.flush()
+def introSequence():
+    cprint('--- Press A To Skip ---', 'white', attrs=['blink'])
+    print("""
+    ██╗  ██╗ ██████╗ ███╗   ███╗███████╗██╗     ███████╗███████╗███████╗
+    ██║  ██║██╔═══██╗████╗ ████║██╔════╝██║     ██╔════╝██╔════╝██╔════╝
+    ███████║██║   ██║██╔████╔██║█████╗  ██║     █████╗  ███████╗███████╗
+    ██╔══██║██║   ██║██║╚██╔╝██║██╔══╝  ██║     ██╔══╝  ╚════██║╚════██║
+    ██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗███████╗███████╗███████║███████║
+    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝╚══════╝
+    """)
+    playsound(soundsDirectory + "Thump.mp3")
+    time.sleep(0.7)
+    print("""
+    ███████╗██╗███╗   ███╗██╗   ██╗██╗      █████╗ ████████╗ ██████╗ ██████╗ 
+    ██╔════╝██║████╗ ████║██║   ██║██║     ██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+    ███████╗██║██╔████╔██║██║   ██║██║     ███████║   ██║   ██║   ██║██████╔╝
+    ╚════██║██║██║╚██╔╝██║██║   ██║██║     ██╔══██║   ██║   ██║   ██║██╔══██╗
+    ███████║██║██║ ╚═╝ ██║╚██████╔╝███████╗██║  ██║   ██║   ╚██████╔╝██║  ██║
+    ╚══════╝╚═╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝                                                                         
+    """)
+    playsound(soundsDirectory + "Thump.mp3")
+    time.sleep(0.7)
+    print("""
+    ██████╗  ██████╗ ██████╗ ██╗  ██╗
+    ╚════██╗██╔═████╗╚════██╗██║  ██║
+     █████╔╝██║██╔██║ █████╔╝███████║ 
+    ██╔═══╝ ████╔╝██║██╔═══╝ ╚════██║
+    ███████╗╚██████╔╝███████╗     ██║
+    ╚══════╝ ╚═════╝ ╚══════╝     ╚═╝
+    """)
+    playsound(soundsDirectory + "Thump.mp3")
+    time.sleep(0.7)
+
+def typingSounds():
+    playsound(soundsDirectory + "Typing.mp3")
+
+def disclaimer():
+    sounds = threading.Thread(target=typingSounds)
+    sounds.start()
+    print("")
+    fancyTextWriting(" --- Disclaimer ---")
+    print("")
+    fancyTextWriting("This game is meant to be educational and show the troubles homeless people have to face,")
+    print("")
+    fancyTextWriting("This game is meant to encourage positive action and charity. And promote awareness of homelessness")
+    print("")
+    fancyTextWriting(" --- Disclaimer ---")
+    print("")
+    accept = input("Are you ok with the contents of this game? (y or n) ")
+    if accept == "y":
+        global accepted
+        accepted = True
+    else:
+        accepted = False
+        exit()
 
 
 def basicLoadSystem():
@@ -53,7 +101,7 @@ def basicLoadSystem():
     if saveYes == "y":
         global saveName
         saveName = input("What is the name of your save? ")
-        with open(saveName + ".json", 'r') as savedata:
+        with open('./Saves/' + saveName + ".json", 'r') as savedata:
             save = json.load(savedata)
             global worldStats
             global playerStats
@@ -91,6 +139,7 @@ def basicLoadSystem():
                 allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
         loadedFiles = False
         print("Starting a new game without loading variables")
+    playsound(soundsDirectory + "Game Start.mp3")
 
 
 def FindLocation(location):
@@ -102,6 +151,12 @@ def FindLocation(location):
 def trueTime():
     if worldStats['Time'] == 24:
         worldStats['Time'] = 0
+
+
+def randomClick():
+    clicks = ["Click1", "Click2", "Click3"]
+    playsound(soundsDirectory + "ClickSounds/" + random.choice(clicks) + ".mp3")
+
 
 
 def Actions(location):
@@ -116,6 +171,7 @@ def Actions(location):
     if spot == 0:
         spot = location.get("Spots")[0]
     # Listing Everything
+    randomClick()
     print("===============")
     print(f"It's currently {worldStats.get('Time')}:00 Oclock!")
     print("You are at " + spot)
@@ -287,12 +343,12 @@ def basicSavingSystem():
                  "BaseFiles": baseFiles
                  }
     saveFormat = json.dumps(saveStats, indent=2)
-    if os.path.isfile('./' + saveName + ".json"):
+    if os.path.isfile('./Saves/' + saveName + ".json"):
         with open(saveName + ".json", "r+") as savefile:
             savefile.truncate(0)
             savefile.write(saveFormat)
     else:
-        with open(saveName + ".json", "x") as savefile:
+        with open('./Saves/' + saveName + ".json", "x") as savefile:
             savefile.write(saveFormat)
 
 
@@ -305,7 +361,8 @@ def endGame():
         print("Good Bye!")
         exit()
 
-
+introSequence()
+disclaimer()
 basicLoadSystem()
 
 
