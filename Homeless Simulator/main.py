@@ -5,7 +5,6 @@ import os
 import sys
 import threading
 from playsound import playsound # Make sure to run pip install playsound==1.2.2
-from termcolor import colored, cprint # Make sure to run pip install termcolor
 
 # Setting Up Game
 projectVersion = "0.0.1"
@@ -38,7 +37,6 @@ def fancyTextWriting(words):
         sys.stdout.write(char)
         sys.stdout.flush()
 def introSequence():
-    cprint('--- Press A To Skip ---', 'white', attrs=['blink'])
     print("""
     ██╗  ██╗ ██████╗ ███╗   ███╗███████╗██╗     ███████╗███████╗███████╗
     ██║  ██║██╔═══██╗████╗ ████║██╔════╝██║     ██╔════╝██╔════╝██╔════╝
@@ -344,7 +342,7 @@ def basicSavingSystem():
                  }
     saveFormat = json.dumps(saveStats, indent=2)
     if os.path.isfile('./Saves/' + saveName + ".json"):
-        with open(saveName + ".json", "r+") as savefile:
+        with open('./Saves/' + saveName + ".json", "r+") as savefile:
             savefile.truncate(0)
             savefile.write(saveFormat)
     else:
