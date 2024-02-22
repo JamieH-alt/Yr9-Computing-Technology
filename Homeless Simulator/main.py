@@ -6,6 +6,9 @@ import sys
 import threading
 from playsound import playsound # Make sure to run pip install playsound==1.2.2
 
+# Self Imports
+import stealGame
+
 # Setting Up Game
 projectVersion = "0.0.1"
 loadedFiles = False
@@ -33,7 +36,6 @@ soundsDirectory = os.getcwd() + "/Sounds/"
 def fancyTextWriting(words):
     for char in words:
         time.sleep(0.05)
-        #playsound(soundsDirectory + "Typing.mp3")
         sys.stdout.write(char)
         sys.stdout.flush()
 def introSequence():
@@ -45,8 +47,8 @@ def introSequence():
     ██║  ██║╚██████╔╝██║ ╚═╝ ██║███████╗███████╗███████╗███████║███████║
     ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝╚══════╝
     """)
-    playsound(soundsDirectory + "Thump.mp3")
-    time.sleep(0.7)
+    soundTrigger("Thump.mp3")
+    time.sleep(1.2)
     print("""
     ███████╗██╗███╗   ███╗██╗   ██╗██╗      █████╗ ████████╗ ██████╗ ██████╗ 
     ██╔════╝██║████╗ ████║██║   ██║██║     ██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
@@ -55,8 +57,8 @@ def introSequence():
     ███████║██║██║ ╚═╝ ██║╚██████╔╝███████╗██║  ██║   ██║   ╚██████╔╝██║  ██║
     ╚══════╝╚═╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝                                                                         
     """)
-    playsound(soundsDirectory + "Thump.mp3")
-    time.sleep(0.7)
+    soundTrigger("Thump.mp3")
+    time.sleep(1.2)
     print("""
     ██████╗  ██████╗ ██████╗ ██╗  ██╗
     ╚════██╗██╔═████╗╚════██╗██║  ██║
@@ -65,15 +67,18 @@ def introSequence():
     ███████╗╚██████╔╝███████╗     ██║
     ╚══════╝ ╚═════╝ ╚══════╝     ╚═╝
     """)
-    playsound(soundsDirectory + "Thump.mp3")
-    time.sleep(0.7)
+    soundTrigger("Thump.mp3")
+    time.sleep(1.2)
 
-def typingSounds():
-    playsound(soundsDirectory + "Typing.mp3")
+def soundTrigger(soundName):
+    soundThread = threading.Thread(target=soundSystem,args=(soundName,))
+    soundThread.start()
+
+def soundSystem(soundName):
+    playsound(soundsDirectory + soundName)
 
 def disclaimer():
-    sounds = threading.Thread(target=typingSounds)
-    sounds.start()
+    soundTrigger("Typing.mp3")
     print("")
     fancyTextWriting(" --- Disclaimer ---")
     print("")
@@ -137,7 +142,7 @@ def basicLoadSystem():
                 allLocations[curDataSet.get("Index")] = curDataSet.get("Name")
         loadedFiles = False
         print("Starting a new game without loading variables")
-    playsound(soundsDirectory + "Game Start.mp3")
+    soundTrigger("Game Start.mp3")
 
 
 def FindLocation(location):
@@ -153,7 +158,7 @@ def trueTime():
 
 def randomClick():
     clicks = ["Click1", "Click2", "Click3"]
-    playsound(soundsDirectory + "ClickSounds/" + random.choice(clicks) + ".mp3")
+    soundTrigger("ClickSounds/" + random.choice(clicks) + ".mp3")
 
 
 
@@ -243,6 +248,15 @@ def Actions(location):
             print(f"Its now {worldStats['Time']}:00 Oclock!")
         else:
             print("You can't do that here!")
+        return
+    elif action.lower() == "steal":
+        if "Steal" in location.get(spot).get("Actions") and "Steal" in location.get(spot):
+            print("You steal from " + location.get("Name"))
+            money = stealGame.snake_game() * 5
+            print(f"You gained {money} money!")
+            print(f"But that cost you 10 Hunger!")
+            playerStats['Hunger'] -= 10
+            print(f"You are now at {playerStats['Hunger']} hunger!")
         return
     elif action.lower() == "inventory":
         print(f"You have")
