@@ -1,0 +1,43 @@
+{
+  "cardboard": {
+    "Name": "A Piece of Cardboard",
+    "Id": "cardboard",
+    "Type": "Structure",
+    "Value": 1,
+    "Cost": 5,
+    "Structure": {
+      "Fort": {
+        "MaxTier": 1
+      }
+    },
+    "Generic": {
+      "SelfCraftable": false, "CraftItems": [], "OtherCraftable": true, "OtherCraftItems": []
+    }
+  },
+  "hotdog": {
+    "Name": "A small hotdog",
+    "Id": "hotdog",
+    "Type": "Food",
+    "Value": 1,
+    "Cost": 7,
+    "Food": {
+      "Amount": 2
+    },
+    "Generic": {
+      "SelfCraftable": false, "CraftItems": [], "OtherCraftable": false, "OtherCraftItems": []
+    }
+  },
+  "sandwhich": {
+    "Name": "A Ham Sandwhich",
+    "Id": "sandwhich",
+    "Type": "Food",
+    "Value": 1,
+    "Cost": 7,
+    "Food": {
+      "Amount": 2
+    },
+    "Generic": {
+      "SelfCraftable": false, "CraftItems": [], "OtherCraftable": false, "OtherCraftItems": []
+    }
+  }
+}
