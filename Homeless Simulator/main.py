@@ -8,9 +8,10 @@ from playsound import playsound # Make sure to run pip install playsound==1.2.2
 
 # Self Imports
 import stealGame
+import fightGame
 
 # Setting Up Game
-projectVersion = "0.0.1"
+projectVersion = "v0.0.3"
 loadedFiles = False
 accepted = False
 
@@ -262,6 +263,33 @@ def Actions(location):
         else:
             print("You can't do that here!")
         return
+    elif action.lower() == "buy":
+        if "Buy" in location.get(spot).get("Actions") and "Store" in location.get(spot):
+            print(f"You open the {spot} store!")
+            print(f"You have {playerStats['Money']} Dollars")
+            print("You may buy:")
+            # Load Items Data
+            with open('items.json', 'r+') as itemsFile:
+                itemsData = json.load(itemsFile)
+                for i in location.get(spot).get("Store"):
+                    iteratedItem = itemsData.get(i)
+                    print(f"*{iteratedItem.get("Name")} -- {iteratedItem.get("Id")} -- for {iteratedItem.get("Cost")} Dollars!")
+            print("To select and item type the part that comes between the \' -- \'")
+            whatItem = input("Which item would you like to buy? (Leave Blank If None) ")
+            if whatItem not in location.get(spot).get("Store"):
+                print("Thats not an item!")
+                return
+            for i in location.get(spot).get("Store"):
+                iteratedItem = itemsData.get(i)
+                if whatItem == iteratedItem.get("Id"):
+                    if playerStats['Money'] >= iteratedItem.get("Cost"):
+                        print(f"You bought {iteratedItem.get("Name")} for {iteratedItem.get("Cost")} Dollars!")
+                        print(f"You went from {playerStats['Money']} dollars to {playerStats['Money'] - iteratedItem.get("Cost")}")
+                        playerStats['Money'] -= iteratedItem.get("Cost")
+                        playerStats['Inventory'].append(whatItem)
+                        return
+                    else:
+                        print("You don't have enough money to buy that!")
     elif action.lower() == "steal":
         if "Steal" in location.get(spot).get("Actions"):
             print("You steal from " + location.get("Name"))
@@ -271,6 +299,33 @@ def Actions(location):
             playerStats['Hunger'] -= 10
             print(f"You are now at {playerStats['Hunger']} hunger!")
         return
+    elif action.lower() == "fight":
+        if "Fight" in location.get(spot).get("Actions"):
+            if len(playerStats['Inventory']) == 0:
+                # Fighting System Needs Work
+                print("You don't have any items!")
+                print("Fighting bare handed!")
+                playerStats['Health'] = fightGame.run_fight_game(1, playerStats['Health'])
+                playerStats['Money'] += 100
+                return
+            with open('items.json', 'r+') as itemsFile:
+                itemsData = json.load(itemsFile)
+                for i in playerStats['Inventory']:
+                    if itemsData.get(i).get("Type") == "Weapon":
+                        print(itemsData.get(i).get("Name") + " -- " + i)
+            if input("Would you like to use any items (y or n) ") == "y":
+                print("To select and item type the part that comes after the \' -- \'")
+                itemSelect = input("Which Item Would you like to use? ")
+                if itemSelect not in playerStats['Inventory'] or itemsData.get(itemSelect).get("Type") != "Weapon":
+                    print("You don't have that item or its not a weapon! Make sure you use the correct ID!")
+                    return
+                for i in playerStats['Inventory']:
+                    if itemSelect == i:
+                        print(f"You're using {itemsData.get(itemSelect).get("Name")}")
+                        print(f"It does {itemsData.get(itemSelect).get("Weapon").get("Damage")}")
+                        playerStats['Health'] = fightGame.run_fight_game(itemsData.get(itemSelect).get("Weapon").get("Damage"), playerStats['Health'])
+                playerStats['Money'] += 50
+                # Add More Into This Later
     elif action.lower() == "inventory":
         print(f"Stats:")
         print(f"*{playerStats['Money']} Dollars")
@@ -307,34 +362,8 @@ def Actions(location):
                         return
                     elif itemType == "Structure":
                         print("Fort Stuff Here Later Lols")
-
-    #
-    # elif action.lower() == "inventory":
-    #     print(f"You have")
-    #     print(f"*{playerStats['Money']} Dollars")
-    #     print(f"*{playerStats['Health']} Health")
-    #     print(f"*{playerStats['Hunger']} Hunger")
-    #     print("These are all the items you have!")
-    #     with open('items.json', 'r+') as itemsFile:
-    #         itemsData = json.load(itemsFile)
-    #         for itemId in playerStats['Inventory']:
-    #             if itemsData.get(itemId):
-    #                 print("test")
-    #             print(itemsData[itemId]["Name"] + " -- " + itemsData[itemId]["Id"])
-    #     invUse = input("Would you like to use any items (y or n)? ")
-    #     if invUse == "y":
-    #         itemSelect = input("Which Item Would you like to use? ")
-    #         doneUsage = False
-    #         for i in playerStats['Inventory']:
-    #             item = itemsData.get(i)
-    #             if itemSelect == i:
-    #                 if item.get("Type") == "food" and doneUsage is False:
-    #                     doneUsage = True
-    #                     print(f"You ate {itemSelect}!")
-    #                     print(f"It gave you {item.get("Food").get("Amount")} hunger!")
-    #                     playerStats['Hunger'] += item.get("Food").get("Amount")
-    #                     print(f"You now have {playerStats['Hunger']} Hunger")
-    #                     playerStats['Inventory'].remove(i)
+                        return
+    # Old Fort System
     #                 elif item.get("Type") == "structure" and doneUsage is False:
     #                     doneUsage = True
     #                     if location.get(spot).get("Fort").get("Buildable") is True:

@@ -39,5 +39,18 @@
     "Generic": {
       "SelfCraftable": false, "CraftItems": [], "OtherCraftable": false, "OtherCraftItems": []
     }
+  },
+  "club": {
+    "Name": "A Club",
+    "Id": "club",
+    "Type": "Weapon",
+    "Value": 1,
+    "Cost": 70,
+    "Weapon": {
+      "Damage": 3
+    },
+    "Generic": {
+      "SelfCraftable": false, "CraftItems": [], "OtherCraftable": false, "OtherCraftItems": []
+    }
   }
 }
