@@ -279,14 +279,19 @@ def Actions(location):
             if whatItem not in location.get(spot).get("Store"):
                 print("Thats not an item!")
                 return
+            howMany = int(input("How many would you like to buy? "))
+            if howMany <= 0:
+                print("You can't buy less than 1 item!")
+                return
             for i in location.get(spot).get("Store"):
                 iteratedItem = itemsData.get(i)
                 if whatItem == iteratedItem.get("Id"):
-                    if playerStats['Money'] >= iteratedItem.get("Cost"):
-                        print(f"You bought {iteratedItem.get("Name")} for {iteratedItem.get("Cost")} Dollars!")
-                        print(f"You went from {playerStats['Money']} dollars to {playerStats['Money'] - iteratedItem.get("Cost")}")
-                        playerStats['Money'] -= iteratedItem.get("Cost")
-                        playerStats['Inventory'].append(whatItem)
+                    if playerStats['Money'] >= iteratedItem.get("Cost") * howMany:
+                        print(f"You bought {howMany} {iteratedItem.get("Name")}('s) for {iteratedItem.get("Cost") * howMany} Dollars!")
+                        print(f"You went from {playerStats['Money']} dollars to {playerStats['Money'] - iteratedItem.get("Cost") * howMany}")
+                        playerStats['Money'] -= iteratedItem.get("Cost") * howMany
+                        for i in range(0, howMany):
+                            playerStats['Inventory'].append(whatItem)
                         return
                     else:
                         print("You don't have enough money to buy that!")
@@ -346,8 +351,8 @@ def Actions(location):
             if itemSelect not in playerStats['Inventory']:
                 print("You don't have that item! Make sure you use the correct ID!")
                 return
+            howMany = int(input("How many would you like to use (Don't Use More Than You Have Will Break): "))
             for i in playerStats['Inventory']:
-                print(i)
                 if itemSelect == i:
                     item = itemsData.get(i)
                     itemType = item.get("Type")
@@ -355,11 +360,12 @@ def Actions(location):
                         print("Crafting Code Here In Future!")
                         return
                     if itemType == "Food":
-                        print(f"You ate {item.get("Name")}")
-                        print(f"It gave you {item.get("Food").get("Amount")} Hunger!")
-                        playerStats['Hunger'] += item.get("Food").get("Amount")
+                        print(f"You ate {howMany} {item.get("Name")}('s)")
+                        print(f"It gave you {item.get("Food").get("Amount") * howMany} Hunger!")
+                        playerStats['Hunger'] += item.get("Food").get("Amount") * howMany
                         print(f"You now have {playerStats['Hunger']} Hunger!")
-                        playerStats['Inventory'].remove(item.get("Id"))
+                        for i2 in range(0, howMany):
+                            playerStats['Inventory'].remove(item.get("Id"))
                         return
                     elif itemType == "Structure":
                         print("Fort Stuff Here Later Lols")
@@ -459,10 +465,13 @@ def endGame():
         print("Good Bye!")
         exit()
 
+
+# ||
+# ||
+# \/ Having The Game Run
 introSequence()
 disclaimer()
 basicLoadSystem()
-
 
 while playerStats['Hunger'] > 0:
     if accepted is True and playerStats['Health'] > 0:
