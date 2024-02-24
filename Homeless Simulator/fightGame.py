@@ -3,7 +3,6 @@ import sys
 import random
 import threading
 from playsound import playsound
-from datetime import datetime
 import os
 
 soundsDirectory = os.getcwd() + "/Sounds/"
