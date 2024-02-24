@@ -294,6 +294,7 @@ def Actions(location):
         if "Steal" in location.get(spot).get("Actions"):
             print("You steal from " + location.get("Name"))
             money = stealGame.snake_game() * 5
+            playerStats['Money'] += money
             print(f"You gained {money} money!")
             print(f"But that cost you 10 Hunger!")
             playerStats['Hunger'] -= 10
