@@ -1,4 +1,5 @@
 # Homeless Simulator Documentation!
+## Docs Are Written For An Outdated Version! Currently the game is 2 versions ahead of documentation.
 ## Version 0.0.1
 
 ##### - [Usage](#usage)
