@@ -123,3 +123,4 @@ def snake_game():
 
     pygame.quit()
     return score
+snake_game()

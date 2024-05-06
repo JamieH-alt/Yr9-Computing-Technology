@@ -301,7 +301,7 @@ def Actions(location):
         with open("locationsSettings.json", "r+") as locationSettings:
             locationData = json.load(locationSettings)
             for i in locationData:
-                print(f"*{locationData.get(i).get("Name")}")
+                print(f"*{locationData.get(i).get('Name')}")
         whereto = input("Where would you like to go? ")
         if whereto == locationData.get(i).get("Name"):
             currentLocation = locationData.get(i).get("Name")
