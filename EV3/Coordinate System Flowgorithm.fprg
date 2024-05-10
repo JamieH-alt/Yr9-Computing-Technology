@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="4.0">
+    <attributes>
+        <attribute name="name" value=""/>
+        <attribute name="authors" value="jamie.hanson"/>
+        <attribute name="about" value=""/>
+        <attribute name="saved" value="2024-05-10 12:24:44 PM"/>
+        <attribute name="created" value="amFtaWUuaGFuc29uOzA0Q0Y0QkIyRDBFRlA7MjAyNC0wNS0xMDsxMjowNjowNCBQTTszMjg4"/>
+        <attribute name="edited" value="amFtaWUuaGFuc29uOzA0Q0Y0QkIyRDBFRlA7MjAyNC0wNS0xMDsxMjoyNDo0NCBQTTsxOzM0MDA="/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="robotx" type="Integer" array="False" size=""/>
+            <assign variable="robotx" expression="0"/>
+            <declare name="roboty" type="Integer" array="False" size=""/>
+            <assign variable="roboty" expression="0"/>
+            <declare name="direction" type="Integer" array="False" size=""/>
+            <assign variable="direction" expression="0"/>
+            <call expression="location(100, 100, robotx, roboty, direction)"/>
+        </body>
+    </function>
+    <function name="location" type="None" variable="">
+        <parameters>
+            <parameter name="targetx" type="Integer" array="False"/>
+            <parameter name="targety" type="Integer" array="False"/>
+            <parameter name="robotx" type="Integer" array="False"/>
+            <parameter name="roboty" type="Integer" array="False"/>
+            <parameter name="robotdirection" type="Integer" array="False"/>
+        </parameters>
+        <body>
+            <declare name="atanx" type="Integer" array="False" size=""/>
+            <declare name="atany" type="Integer" array="False" size=""/>
+            <declare name="turn" type="Integer" array="False" size=""/>
+            <assign variable="atanx" expression="targetx - robotx"/>
+            <assign variable="atany" expression="targety - roboty"/>
+            <assign variable="turn" expression="arctan(atany / atanx)"/>
+            <declare name="turndegrees" type="Integer" array="False" size=""/>
+            <assign variable="turndegrees" expression="turn * (180/pi)"/>
+            <declare name="tempdirection" type="Integer" array="False" size=""/>
+            <assign variable="tempdirection" expression="turndegrees"/>
+            <assign variable="turndegrees" expression="turndegrees - robotdirection"/>
+            <assign variable="robotdirection" expression="tempdirection"/>
+            <output expression="&quot;Robot will turn &quot; &amp; turndegrees &amp; &quot; degrees&quot;" newline="True"/>
+            <output expression="&quot;Robot will face &quot; &amp; robotdirection &amp; &quot; degrees&quot;" newline="True"/>
+            <declare name="distance" type="Integer" array="False" size=""/>
+            <assign variable="distance" expression="sqrt((targetx - robotx)^2 + (targety - roboty)^2)"/>
+            <output expression="&quot;Robot will travel &quot; &amp; distance &amp; &quot;mm&quot;" newline="True"/>
+        </body>
+    </function>
+</flowgorithm>

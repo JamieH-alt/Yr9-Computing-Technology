@@ -25,10 +25,13 @@ def location(x, y):
     atan_y = y - robot_y
     turn = math.atan2(atan_y, atan_x)
     degrees = math.degrees(turn)
-    direction = degrees
-    robot.turn(degrees)
+    tempdirection = degrees
+    degrees -= direction
+    direction = abs(tempdirection)
+    degrees = abs(degrees)
     print(degrees)  # Debugs how much it should turn by.
     print(direction)  # Debugs where it should be facing.
+    robot.turn(degrees)
     distance = pow(pow(x - robot_x, 2) + pow(y - robot_y, 2), 0.5)
     print(distance)  # Debugs distance drove
     robot.straight(distance)
@@ -39,7 +42,9 @@ location(100, 0)
 location(100, 100)
 location(0, 100)
 location(0, 0)
-#location(530, 460)
-#location(700 ,570)
-#location(700, 770)
-#location(760, 180)
+
+# Actual Positions
+location(530, 460)
+location(700 ,570)
+location(700, 770)
+location(760, 180)
