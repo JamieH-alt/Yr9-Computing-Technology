@@ -11,11 +11,12 @@ direction = 0
 
 # Initialization
 ev3 = EV3Brick() 
-left_motor = Motor(Port.B)  # Change this to match.
-right_motor = Motor(Port.C)  # Change this to match.
+left_motor = Motor(Port.B)
+right_motor = Motor(Port.C)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=55.5, axle_track=104)
 
 
+# This function essentially just gets two coordinates, then makes the robot turn and drive to those coordinates
 def location(x, y):
     global robot_x
     global robot_y
@@ -27,8 +28,12 @@ def location(x, y):
     degrees = math.degrees(turn)
     tempdirection = degrees
     degrees -= direction
-    direction = abs(tempdirection)
-    degrees = abs(degrees)
+    if (degrees < 0):
+        degrees += 360
+    if (tempdirection < 0):
+        tempdirection += 360
+    direction = tempdirection
+    #degrees = abs(degrees)
     print(degrees)  # Debugs how much it should turn by.
     print(direction)  # Debugs where it should be facing.
     robot.turn(degrees)
@@ -37,11 +42,6 @@ def location(x, y):
     robot.straight(distance)
     robot_x = x
     robot_y = y
-
-location(100, 0)
-location(100, 100)
-location(0, 100)
-location(0, 0)
 
 # Actual Positions
 location(530, 460)

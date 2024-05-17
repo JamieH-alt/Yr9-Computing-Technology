@@ -4,20 +4,36 @@
         <attribute name="name" value=""/>
         <attribute name="authors" value="jamie.hanson"/>
         <attribute name="about" value=""/>
-        <attribute name="saved" value="2024-05-10 12:24:44 PM"/>
+        <attribute name="saved" value="2024-05-17 01:01:48 PM"/>
         <attribute name="created" value="amFtaWUuaGFuc29uOzA0Q0Y0QkIyRDBFRlA7MjAyNC0wNS0xMDsxMjowNjowNCBQTTszMjg4"/>
-        <attribute name="edited" value="amFtaWUuaGFuc29uOzA0Q0Y0QkIyRDBFRlA7MjAyNC0wNS0xMDsxMjoyNDo0NCBQTTsxOzM0MDA="/>
+        <attribute name="edited" value="amFtaWUuaGFuc29uOzA0Q0Y0QkIyRDBFRlA7MjAyNC0wNS0xNzswMTowMTo0OCBQTTs1OzM0MDg="/>
     </attributes>
     <function name="Main" type="None" variable="">
         <parameters/>
         <body>
-            <declare name="robotx" type="Integer" array="False" size=""/>
-            <assign variable="robotx" expression="0"/>
-            <declare name="roboty" type="Integer" array="False" size=""/>
-            <assign variable="roboty" expression="0"/>
-            <declare name="direction" type="Integer" array="False" size=""/>
-            <assign variable="direction" expression="0"/>
-            <call expression="location(100, 100, robotx, roboty, direction)"/>
+            <comment text="#!/usr/bin/env pybricks-micropython&#13;&#10;from pybricks.hubs import EV3Brick&#13;&#10;from pybricks.ev3devices import Motor&#13;&#10;from pybricks.parameters import Port&#13;&#10;from pybricks.robotics import DriveBase&#13;&#10;import math"/>
+            <declare name="run" type="Boolean" array="False" size=""/>
+            <assign variable="run" expression="true"/>
+            <while expression="run == true">
+                <declare name="robotx" type="Integer" array="False" size=""/>
+                <output expression="&quot;Robot's X coordinate&quot;" newline="True"/>
+                <input variable="robotx"/>
+                <output expression="&quot;Robot's Y coordinate&quot;" newline="True"/>
+                <declare name="roboty" type="Integer" array="False" size=""/>
+                <input variable="roboty"/>
+                <output expression="&quot;Robot's direction&quot;" newline="True"/>
+                <declare name="direction" type="Integer" array="False" size=""/>
+                <input variable="direction"/>
+                <output expression="&quot;Robot's target X coordinate&quot;" newline="True"/>
+                <declare name="targetx" type="Integer" array="False" size=""/>
+                <input variable="targetx"/>
+                <output expression="&quot;Robot's target Y coordinate&quot;" newline="True"/>
+                <declare name="targety" type="Integer" array="False" size=""/>
+                <input variable="targety"/>
+                <call expression="location(targetx, targety, robotx, roboty, direction)"/>
+                <output expression="&quot;Continue? (For flowchart purposes): true or false&quot;" newline="True"/>
+                <input variable="run"/>
+            </while>
         </body>
     </function>
     <function name="location" type="None" variable="">
